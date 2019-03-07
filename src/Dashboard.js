@@ -139,8 +139,6 @@ class index extends Component {
               }}
             />
           }
-          routePathname={this.props.routePathname}
-          routeQuery={this.props.routeQuery}
           roleConfig={{
             canRead: true,
             canCreate: this.props.canCreate,

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import Dashboard from './Dashboard';
-import connect from './connect';
 import { getDeepObjectValue } from 'validate.js';
+import { Selector } from 'net-provider'
 class DashboardWrapper extends Component {
   render() {
-    const {showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, routePathname, routeQuery, url} = this.props
+    const {showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url} = this.props
     if(!url) {
       return 'Missing Url'
     }
-    const dashboardData = getDeepObjectValue(this.props, 'dashboard.data') || [];
+    const dashboardData = this.props.dashboardData || [];
     const data = dashboardData.find(item => (item.result.name === url));
     if(!data) return '...'
     const dashboardConfig = data.data.dashboardConfig || {};
@@ -28,14 +28,22 @@ class DashboardWrapper extends Component {
         listTargetKeyPrefix={listTargetKeyPrefix}
         populate={dashboardConfig.populate}
         dashboardData={dashboardData}
-        routePathname={routePathname}
-        routeQuery={routeQuery}
       />
     );
   }
 }
 
-export default connect(DashboardWrapper);
+export default class DashboardApp extends Component {
+  render() {
+    return (
+      <Selector targetKey={'dashboard'}>
+        {({data}) => {
+          return <DashboardWrapper dashboardData={data} {...this.props}/>
+        }}
+      </Selector>
+    )
+  }
+}
 
 DashboardWrapper.defaultProps = {
   syncWithUrl: true,
