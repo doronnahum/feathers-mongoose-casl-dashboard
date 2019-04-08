@@ -71,10 +71,11 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
     const item = properties[itemKey]
     const options = (item.enum && item.enum.length) ? item.enum : getDeepObjectValue(item, 'items.enum');
     let type = item.type;
+    let objectStructure;
     if(item.format === 'date-time') type = Date;
     let objectFields;
     if(item.properties && Object.keys(item.properties).length) {
-      objectFields = getDocFields({documentRollConfig, isNewDoc, values}, {properties: item.properties}, abilityFields, dashboardData, `${itemKey}.`)
+      objectFields = getDocFields({documentRollConfig, isNewDoc, values}, {properties: item.properties, required: requires}, abilityFields, dashboardData, `${itemKey}.`)
       if(objectFields && objectFields.length) {
         fields.push(
           <div key={itemKey} className={`group-${itemKey}`}>
@@ -89,6 +90,21 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
     }
     const arrayItemType = getDeepObjectValue(item, 'items.type');
     const nestedArray = type === 'array' && !arrayItemType;
+    if(type === 'array' && item.items && item.items.properties) {
+      objectStructure = [];
+      Object.keys(item.items.properties).forEach(itemKey => {
+        const arrayField = item.items.properties[itemKey];
+        let _type = arrayField.type;
+        if(arrayField.format === 'date-time') {
+          _type = 'date'
+        }
+        objectStructure.push({
+          key: itemKey,
+          label: itemKey,
+          type: _type
+        })
+      })
+    }
     const dashboard = getDeepObjectValue(item, 'meta.0.dashboard') || {}
     const dashboardDoc = getDeepObjectValue(item, 'meta.0.dashboard.doc') || {}
     if(dashboard.hide) return null
@@ -103,7 +119,7 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
         key: preFix + itemKey,
         label: dashboardDoc.label || dashboard.label || startCase(itemKey),
         type: type,
-        required: requires.includes(itemKey),
+        required: requires.includes(preFix + itemKey),
         documentRollConfig,
         isNewDoc,
         arrayItemType,
@@ -113,10 +129,11 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
         multiSelect: item.type === 'array' || item.type === Array,
         options: (options && options.length) ? options : null,
         nestedArray,
-        disabled: item.readOnly || dashboardDoc.readOnly,
+        disabled: item.readOnly || dashboard.readOnly || dashboardDoc.readOnly || (!isNewDoc && dashboardDoc.immutable),
         inputType: dashboardDoc.inputType,
         inputProps: dashboardDoc.inputProps ? JSON.parse(dashboardDoc.inputProps) : null,
-        RefComponent: RefComponent
+        RefComponent: RefComponent,
+        objectStructure
       })
     )
   });

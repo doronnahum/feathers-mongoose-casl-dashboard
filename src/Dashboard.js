@@ -34,6 +34,10 @@ class index extends Component {
       const newProperties = {};
       fields.forEach(filedKey => {
         const field = _schema.properties[filedKey]
+        if(field.type === 'object' && field.required) {
+          required.push(filedKey)
+          field.required.forEach(innerField => required.push(`${filedKey}.${innerField}`))
+        }
         const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
         if(dashboard && dashboard.hide) {
           return;
@@ -73,7 +77,7 @@ class index extends Component {
     return null;
   }
   render() {
-    const {url, jsonSchema, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData} = this.props;
+    const {url, jsonSchema, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved} = this.props;
     if(!jsonSchema || !url) return ''
     this.joiSchema = this.joiSchema || this.getJoiSchema(jsonSchema);
     const defaultOptions = this.getDefaultOptions()
@@ -92,6 +96,7 @@ class index extends Component {
                 return this.listFields;
               }}
               rowSelection={this.props.rowSelection}
+              onRow={this.props.onRow}
             />
           }
           doc={
@@ -147,6 +152,7 @@ class index extends Component {
           }}
           showBreadcrumb={showBreadcrumb}
           syncWithUrl={syncWithUrl}
+          editAfterSaved={editAfterSaved}
         />
       </div>
     );

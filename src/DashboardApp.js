@@ -4,7 +4,7 @@ import { getDeepObjectValue } from 'validate.js';
 import { Selector } from 'net-provider'
 class DashboardWrapper extends Component {
   render() {
-    const {showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url} = this.props
+    const {showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved} = this.props
     if(!url) {
       return 'Missing Url'
     }
@@ -28,6 +28,8 @@ class DashboardWrapper extends Component {
         listTargetKeyPrefix={listTargetKeyPrefix}
         populate={dashboardConfig.populate}
         dashboardData={dashboardData}
+        onRow={onRow}
+        editAfterSaved={editAfterSaved}
       />
     );
   }
@@ -47,5 +49,6 @@ export default class DashboardApp extends Component {
 
 DashboardWrapper.defaultProps = {
   syncWithUrl: true,
-  showBreadcrumb: true
+  showBreadcrumb: true,
+  editAfterSaved: true
 };

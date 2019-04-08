@@ -50,7 +50,12 @@ class RefComponent extends Component {
         const {optionKey, optionLabel, multiSelect} = this.props
         const isString = typeof item === 'string';
         const val = isString ? item : item[optionKey]
-        const render = (d) => <Tag className={multiSelect ? 'ra-refModal__multiTag' : 'ra-refModal__oneTag'} key={val} closable onClose={() => this.removeItem(val)}>{d}</Tag>
+        const render = (d) => <Tag
+          className={multiSelect ? 'ra-refModal__multiTag' : 'ra-refModal__oneTag'}
+          key={val}
+          closable
+          onClose={() => this.removeItem(val)}><a href={`/app/dashboard?screen=${this.props.url}&e=${isString ? item : item._id}`} target="_blank">{d}</a>
+        </Tag>
         // item is object
         if(!isString) {
           return render(item[optionLabel] || item[optionKey])
@@ -102,13 +107,33 @@ class RefComponent extends Component {
       renderEmpty = () => {
         return this.props.multiSelect ? 'Click to select many' : 'Click to select one'
       }
+
+      onSelect = (record) => {
+        let selectedRowKeys = this.state.selectedRowKeys;
+        const selectedRowKeysData = [...this.state.selectedRowKeysData, record];
+        const isSelected = selectedRowKeys.find(item => item === record._id);
+        if(isSelected) {
+          selectedRowKeys = selectedRowKeys.filter(item => item !== record._id)
+        }else{
+          selectedRowKeysData.push(record)
+          selectedRowKeys.push(record._id)
+        }
+        if(this.props.multiSelect) {
+          this.setState({selectedRowKeys: selectedRowKeys, selectedRowKeysData})
+        }else{
+          if(isSelected) this.setState({selectedRowKeys: [], selectedRowKeysData})
+          if(!isSelected) this.setState({selectedRowKeys: [record._id], selectedRowKeysData})
+        }
+      }
       render() {
+        const {selectedRowKeys} = this.state
         const {url, multiSelect, fieldName, label, fieldError, required} = this.props
+        const selectRowCounter = ` - (${selectedRowKeys.length})`
         return (
-          <Form.Item label={label} required={required} hasFeedback={fieldError} help={fieldError || ''} validateStatus={fieldError ? 'error' : 'validating'}>
+          <Form.Item label={label} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
             {this.renderValue()}
             <Modal
-              title={fieldName}
+              title={'Select ' + fieldName + selectRowCounter}
               destroyOnClose
               visible={this.state.visible}
               onOk={this.handleOk}
@@ -117,6 +142,7 @@ class RefComponent extends Component {
               style={{ top: 10 }}
               className='ra-refModal'
               closable={false}
+              okText='Select'
             >
               <Dashboard
                 listTargetKeyPrefix='RefComponent'
@@ -127,16 +153,15 @@ class RefComponent extends Component {
                 syncWithUrl={false}
                 rowSelection={{
                   selectedRowKeys: this.state.selectedRowKeys,
-                  onSelect: (record, row, rows) => {
-                    const selectedRowKeysData = [...this.state.selectedRowKeysData, ...rows];
-                    if(multiSelect) {
-                      this.setState({selectedRowKeys: rows.map(item => item._id), selectedRowKeysData})
-                    }else{
-                      this.setState({selectedRowKeys: [record._id], selectedRowKeysData})
-                    }
-                  },
+                  onSelect: (row, record, rows) => this.onSelect(row),
                   type: multiSelect ? 'checkbox' : 'radio'
                 }}
+                onRow={(record) => {
+                  return {
+                    onClick: () => this.onSelect(record)
+                  };
+                }}
+                editAfterSaved={false}
               />
             </Modal>
           </Form.Item>
