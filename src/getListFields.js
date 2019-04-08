@@ -1,4 +1,4 @@
-import {getListField} from 'redux-admin/lib/helpers/getListField';
+import {listHelpers} from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
 
@@ -27,7 +27,7 @@ const getListFields = function (props, jsonSchema = {}) {
       width: dashboardList.width,
       labelKey: meta.displayKey
     };
-    fields.push(getListField(fieldConfig))
+    fields.push(listHelpers.getListField(fieldConfig))
   })
   return fields;
 }
