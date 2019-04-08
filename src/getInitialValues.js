@@ -1,5 +1,5 @@
+import React from 'react';
 import { getDeepObjectValue } from 'validate.js';
-
 const getInitialValues = function (jsonSchema = {}) {
   const properties = jsonSchema.properties || {};
   const initialValues = {}

@@ -1,3 +1,4 @@
+import React from 'react';
 import {docHelpers} from 'redux-admin' //  'src/components/redux-admin';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';

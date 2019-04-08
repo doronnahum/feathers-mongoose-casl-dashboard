@@ -1,3 +1,4 @@
+import React from 'react';
 import {listHelpers} from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
