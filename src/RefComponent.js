@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {fields} from 'src/localnode/redux-admin' //  'src/components/redux-admin';
+import {fields} from 'redux-admin' //  'src/components/redux-admin';
 import Dashboard from './DashboardApp.js';
 import {Modal, Tag, Icon, Form} from 'antd';
 import isEmpty from 'lodash/isEmpty';

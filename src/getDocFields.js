@@ -1,5 +1,5 @@
 import React from 'react';
-import {docHelpers} from 'src/localnode/redux-admin' //  'src/components/redux-admin';
+import {docHelpers} from 'redux-admin' //  'src/components/redux-admin';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 import RefComponent from './RefComponent'

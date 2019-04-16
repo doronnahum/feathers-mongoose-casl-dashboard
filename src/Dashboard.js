@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FeathersAdmin, listViews, docViews} from 'src/localnode/redux-admin'
+import {FeathersAdmin, listViews, docViews} from 'redux-admin'
 import getListFields from './getListFields';
 import getDocFields from './getDocFields';
 import getInitialValues from './getInitialValues';
