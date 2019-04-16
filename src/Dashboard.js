@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {FeathersAdmin, listViews, docViews} from 'redux-admin' //  'src/components/redux-admin'
+import {FeathersAdmin, listViews, docViews} from 'src/localnode/redux-admin'
 import getListFields from './getListFields';
 import getDocFields from './getDocFields';
 import getInitialValues from './getInitialValues';
@@ -103,8 +103,10 @@ class index extends Component {
             <docViews.SimpleDoc
               immutableKeys={['_id', 'updatedAt', 'createdAt']}
               getDocFields={(props) => {
-                this.docFields = this.docFields || getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData)
-                return this.docFields;
+                const isNewDoc = props.isNewDoc;
+                this.newDocFields = this.newDocFields || isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData) : null;
+                this.editDocFields = this.editDocFields || !isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData) : null;
+                return (isNewDoc ? this.newDocFields : this.editDocFields)
               }}
               newDocInitialValues ={getInitialValues(jsonSchema)}
               validationSchema={this.joiSchema}

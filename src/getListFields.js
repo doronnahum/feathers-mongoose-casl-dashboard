@@ -1,5 +1,5 @@
 import React from 'react';
-import {listHelpers} from 'redux-admin';
+import {listHelpers} from 'src/localnode/redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
 
@@ -19,7 +19,6 @@ const getListFields = function (props, jsonSchema = {}) {
     }
     if(dashboard.hide) return null
     if(dashboardList.hide) return null;
-    console.log({itemKey})
     const fieldConfig = {
       key: itemKey,
       title: dashboardList.label || dashboard.label || startCase(itemKey),

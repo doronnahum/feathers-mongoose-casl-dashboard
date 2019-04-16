@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {Button} from 'antd';
 import { Formik } from 'formik';
-import {docHelpers} from 'redux-admin' //  'src/components/redux-admin';
+import {docHelpers} from 'src/localnode/redux-admin' //  'src/components/redux-admin';
 import { NetProvider } from 'net-provider' // 'src/components/net-provider';
 import JSONPretty from 'react-json-pretty';
 

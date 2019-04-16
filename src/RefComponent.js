@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {fields} from 'redux-admin' //  'src/components/redux-admin';
+import {fields} from 'src/localnode/redux-admin' //  'src/components/redux-admin';
 import Dashboard from './DashboardApp.js';
 import {Modal, Tag, Icon, Form} from 'antd';
 import isEmpty from 'lodash/isEmpty';
@@ -47,13 +47,13 @@ class RefComponent extends Component {
       }
 
       renderItem = (item) => {
-        const {optionKey, optionLabel, multiSelect} = this.props
+        const {optionKey, optionLabel, multiSelect, disabled} = this.props
         const isString = typeof item === 'string';
         const val = isString ? item : item[optionKey]
         const render = (d) => <Tag
           className={multiSelect ? 'ra-refModal__multiTag' : 'ra-refModal__oneTag'}
           key={val}
-          closable
+          closable={!disabled}
           onClose={() => this.removeItem(val)}><a href={`/app/dashboard?screen=${this.props.url}&e=${isString ? item : item._id}`} target="_blank">{d}</a>
         </Tag>
         // item is object
@@ -93,12 +93,12 @@ class RefComponent extends Component {
         const {value, multiSelect, disabled} = this.props
         const _isEmpty = isEmpty(value)
         return (
-          <div className={`ra-refModal__input ${_isEmpty ? ' --empty' : ''}`} onClick={_isEmpty && this.showModal}>
+          <div className={`ra-refModal__input ${_isEmpty ? ' --empty' : ''} ${disabled ? ' --disabled' : ''}`} onClick={_isEmpty && this.showModal}>
             { _isEmpty
               ? this.renderEmpty()
               : multiSelect
-                ? value.map(item => this.renderItem(item))
-                : this.renderItem(value)
+                ? value.map(item => this.renderItem(item, disabled))
+                : this.renderItem(value, disabled)
             }
             {!disabled && <Icon className='ra-refModal__input__plus' type="plus-square" onClick={this.showModal}/>}
           </div>
@@ -127,10 +127,10 @@ class RefComponent extends Component {
       }
       render() {
         const {selectedRowKeys} = this.state
-        const {url, multiSelect, fieldName, label, fieldError, required, disabled} = this.props
+        const {url, multiSelect, fieldName, label, fieldError, required} = this.props
         const selectRowCounter = ` - (${selectedRowKeys.length})`
         return (
-          <Form.Item label={label} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'} disabled={disabled}>
+          <Form.Item label={label} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
             {this.renderValue()}
             <Modal
               title={'Select ' + fieldName + selectRowCounter}
@@ -171,14 +171,14 @@ class RefComponent extends Component {
 
 class RefComponentWithValue extends React.Component {
   render() {
-    const {name, multiSelect, optionKey, optionLabel, label, required} = this.props.fieldProps;
+    const {name, multiSelect, optionKey, optionLabel, label, required, disabled} = this.props.fieldProps;
     return (
       <Consumer>
         {(form) => {
           const { setFieldValue, values, errors } = form
           const value = fields.util.getFieldValueByName(name, values)
           const fieldError = fields.util.getFieldErrorByName(name, errors)
-          return <RefComponent fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect}/>
+          return <RefComponent disabled={disabled} fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect}/>
         }}
       </Consumer>
     );
