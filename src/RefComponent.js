@@ -51,7 +51,7 @@ class RefComponent extends Component {
         const isString = typeof item === 'string';
         const val = isString ? item : item[optionKey]
         const render = (d) => <Tag
-          className={multiSelect ? 'ra-refModal__multiTag' : 'ra-refModal__oneTag'}
+          className={multiSelect ? 'ra-refModal__multiTag ra-text-ellipsis' : 'ra-refModal__oneTag ra-text-ellipsis'}
           key={val}
           closable={!disabled}
           onClose={() => this.removeItem(val)}><a href={`/app/dashboard?screen=${this.props.url}&e=${isString ? item : item._id}`} target="_blank">{d}</a>
@@ -109,7 +109,7 @@ class RefComponent extends Component {
       }
 
       onSelect = (record) => {
-        let selectedRowKeys = this.state.selectedRowKeys;
+        let selectedRowKeys = [...this.state.selectedRowKeys];
         const selectedRowKeysData = [...this.state.selectedRowKeysData, record];
         const isSelected = selectedRowKeys.find(item => item === record._id);
         if(isSelected) {

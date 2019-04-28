@@ -34,11 +34,14 @@ class index extends Component {
       const newProperties = {};
       fields.forEach(filedKey => {
         const field = _schema.properties[filedKey]
+        const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
+        if(dashboard && dashboard.allowNull) {
+          field.type = [field.type, null]
+        }
         if(field.type === 'object' && field.required) {
           required.push(filedKey)
           field.required.forEach(innerField => required.push(`${filedKey}.${innerField}`))
         }
-        const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
         if(dashboard && dashboard.hide) {
           return;
         }
@@ -73,8 +76,13 @@ class index extends Component {
   }
   getDefaultOptions = () => {
     const {populate} = this.props
-    if(populate) return {$populate: populate.join(',')};
-    return null;
+    if(populate) {return {
+      $populate: populate.join(','),
+      '$sort[updatedAt]': -1
+    };}
+    return {
+      '$sort[updatedAt]': -1
+    };
   }
   render() {
     const {url, jsonSchema, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved} = this.props;

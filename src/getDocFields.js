@@ -3,6 +3,8 @@ import {docHelpers} from 'redux-admin' //  'src/components/redux-admin';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 import RefComponent from './RefComponent'
+import { Collapse } from 'antd';
+
 /*
 getDocField({
     key,
@@ -79,12 +81,11 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
       objectFields = getDocFields({documentRollConfig, isNewDoc, values}, {properties: item.properties, required: requires}, abilityFields, dashboardData, `${itemKey}.`)
       if(objectFields && objectFields.length) {
         fields.push(
-          <div key={itemKey} className={`group-${itemKey}`}>
-            <label>{startCase(itemKey)}:</label>
-            <div className='ra-fieldsGroup'>
+          <Collapse key={itemKey} className={`group-${itemKey} ra-mb15`} defaultActiveKey={isNewDoc ? ['1'] : null}>
+            <Collapse.Panel key={1} header={<label>{startCase(itemKey)}:</label>}>
               {objectFields}
-            </div>
-          </div>
+            </Collapse.Panel>
+          </Collapse>
         )
         return;
       }
@@ -134,7 +135,8 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
         inputType: dashboardDoc.inputType,
         inputProps: dashboardDoc.inputProps ? JSON.parse(dashboardDoc.inputProps) : null,
         RefComponent: RefComponent,
-        objectStructure
+        objectStructure,
+        helpText: dashboardDoc.helpText
       })
     )
   });

@@ -109,3 +109,10 @@
 .__json-pretty__ .__json-boolean__ {
   color: #ac81fe;
 }
+.ra-text-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden; 
+}
+.ra-mb15 {
+  margin-bottom: 15px;
+}
