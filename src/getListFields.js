@@ -2,16 +2,29 @@ import React from 'react';
 import {listHelpers} from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
+const EMPTY_OBJ = {};
 
 const getListFields = function (props, jsonSchema = {}) {
-  const properties = jsonSchema.properties || {};
+  const properties = jsonSchema.properties || EMPTY_OBJ;
   const fields = []
   Object.keys(properties).map(itemKey => {
     const item = properties[itemKey]
-    const meta = getDeepObjectValue(item, 'meta.0') || {}
-
-    const dashboard = getDeepObjectValue(meta, 'dashboard') || {}
-    const dashboardList = getDeepObjectValue(meta, 'dashboard.list') || {}
+    let meta = getDeepObjectValue(item, 'meta.0') || EMPTY_OBJ
+    if((item.type === 'object' || item.type === Object) && meta === EMPTY_OBJ) {
+      // in this case the meta can be found at the children as parentDashboard, this is a workaround;
+      let metaFromInnerField;
+      Object.keys(item.properties).map(itemKey => {
+        if(!metaFromInnerField) {
+          const innerField = item.properties[itemKey];
+          metaFromInnerField = getDeepObjectValue(innerField, 'meta.0.parentDashboard')
+        }
+      })
+      if(metaFromInnerField) {
+        meta = {dashboard: metaFromInnerField};
+      }
+    }
+    const dashboard = getDeepObjectValue(meta, 'dashboard') || EMPTY_OBJ
+    const dashboardList = getDeepObjectValue(meta, 'dashboard.list') || EMPTY_OBJ
     let type = item.type;
     if(item.format === 'date-time') type = Date;
     if(meta.ref) {

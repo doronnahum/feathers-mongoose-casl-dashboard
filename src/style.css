@@ -116,3 +116,39 @@
 .ra-mb15 {
   margin-bottom: 15px;
 }
+.onTopBoxRow{
+    display: flex;
+    justify-content: space-between;
+    height: 115px;
+    padding: 10px;
+    background: #e9ecf4;
+}
+.onTopBox {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  width: 150px;
+  height: 100px;
+  justify-content: center;
+}
+.onTopBox.primary:hover {
+  border: 1px solid red;
+}
+.onTopBox.primary {
+  background: white;
+  color: palevioletred;
+}
+.onTopBox__number {
+  font-size: 30px;
+}
+.onTopBox__text {
+  font-size: 15px;
+}
+.ra-doc-layout-itemsGroup {
+  display: flex;
+  max-width: 515px;
+}
+.ra-doc-layout-itemsGroup .ra-docFieldWrapper {
+  margin-right: 15px;
+  flex: 1;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { getDeepObjectValue } from 'validate.js';
 const getInitialValues = function (jsonSchema = {}) {
   const properties = jsonSchema.properties || {};
@@ -8,6 +9,9 @@ const getInitialValues = function (jsonSchema = {}) {
     const docDashboard = getDeepObjectValue(item, 'meta.0.dashboard.doc');
     if(docDashboard && docDashboard.initialValue) {
       initialValues[itemKey] = docDashboard.initialValue;
+      if(docDashboard.initialValue === 'date-now') {
+        initialValues[itemKey] = new Date().toISOString();
+      }
     }
   })
   return initialValues;

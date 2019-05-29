@@ -21,6 +21,7 @@ class DashboardWrapper extends Component {
         canDelete={data.result.canDelete}
         updateFields={data.result.updateFields}
         createFields={data.result.createFields}
+        dashboardConfig={dashboardConfig}
         jsonSchema={data.schema}
         showBreadcrumb={showBreadcrumb}
         syncWithUrl={syncWithUrl}

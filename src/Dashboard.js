@@ -7,6 +7,7 @@ import startCase from 'lodash/startCase';
 // import {buildYup} from './utils/json-schema-to-yup/index';
 import {buildYup} from 'json-schema-to-yup';
 import cloneDeep from 'lodash/cloneDeep';
+import {Icon} from 'antd';
 import { getDeepObjectValue } from 'validate.js';
 class index extends Component {
   constructor(props) {
@@ -85,7 +86,7 @@ class index extends Component {
     };
   }
   render() {
-    const {url, jsonSchema, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved} = this.props;
+    const {url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved} = this.props;
     if(!jsonSchema || !url) return ''
     this.joiSchema = this.joiSchema || this.getJoiSchema(jsonSchema);
     const defaultOptions = this.getDefaultOptions()
@@ -99,6 +100,22 @@ class index extends Component {
           listTargetKeyPrefix={listTargetKeyPrefix}
           list={
             <listViews.Table
+              // renderOnTop={(props) => {
+              //   console.log({props})
+              //   return (
+              //     <div className='onTopBoxRow'>
+              //       <div className='onTopBox'>
+              //         <div className='onTopBoxValue__number'>{props.count || 0}</div>
+              //         <div className='onTopBox__text'>Total</div>
+              //       </div>
+              //       <div className='onTopBox primary'>
+              //         <div className='onTopBoxValue__number'><Icon type="user-add" /></div>
+              //         <div className='onTopBox__text'>Add</div>
+              //       </div>
+              //     </div>
+
+              //   )
+              // }}
               getColumns={(props) => {
                 this.listFields = this.listFields || getListFields(props, jsonSchema);
                 return this.listFields;
@@ -112,8 +129,8 @@ class index extends Component {
               immutableKeys={['_id', 'updatedAt', 'createdAt']}
               getDocFields={(props) => {
                 const isNewDoc = props.isNewDoc;
-                this.newDocFields = this.newDocFields || isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData) : null;
-                this.editDocFields = this.editDocFields || !isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData) : null;
+                this.newDocFields = this.newDocFields || isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData, '', dashboardConfig) : null;
+                this.editDocFields = this.editDocFields || !isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData, '', dashboardConfig) : null;
                 return (isNewDoc ? this.newDocFields : this.editDocFields)
               }}
               newDocInitialValues ={getInitialValues(jsonSchema)}
