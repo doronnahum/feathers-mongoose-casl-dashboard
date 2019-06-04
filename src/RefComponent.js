@@ -92,6 +92,7 @@ class RefComponent extends Component {
       renderValue = () => {
         const {value, multiSelect, disabled} = this.props
         const _isEmpty = isEmpty(value)
+        const showPanIcon = !multiSelect && !_isEmpty
         return (
           <div className={`ra-refModal__input ${_isEmpty ? ' --empty' : ''} ${disabled ? ' --disabled' : ''}`} onClick={_isEmpty && this.showModal}>
             { _isEmpty
@@ -100,7 +101,7 @@ class RefComponent extends Component {
                 ? value.map(item => this.renderItem(item, disabled))
                 : this.renderItem(value, disabled)
             }
-            {!disabled && <Icon className='ra-refModal__input__plus' type="plus-square" onClick={this.showModal}/>}
+            {!disabled && <Icon className='ra-refModal__input__plus' type={showPanIcon ? "edit" : "plus-square"} onClick={this.showModal}/>}
           </div>
         )
       }
@@ -130,7 +131,7 @@ class RefComponent extends Component {
         const {url, multiSelect, fieldName, label, fieldError, required} = this.props
         const selectRowCounter = ` - (${selectedRowKeys.length})`
         return (
-          <Form.Item label={label} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
+          <Form.Item label={label} className={'ra-docFieldWrapper ra-docField-' + fieldName} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
             {this.renderValue()}
             <Modal
               title={'Select ' + fieldName + selectRowCounter}
