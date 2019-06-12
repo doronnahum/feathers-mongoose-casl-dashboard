@@ -81,9 +81,9 @@ const getDocFields = function({documentRollConfig, isNewDoc, values}, jsonSchema
     let objectFields;
     if(item.properties && Object.keys(item.properties).length) {
       objectFields = getDocFields({documentRollConfig, isNewDoc, values}, {properties: item.properties, required: requires}, abilityFields, dashboardData, `${itemKey}.`)
-      if(objectFields && objectFields.length) {
+      if(objectFields.length) {
         const currentField = (<Collapse key={itemKey} className={`group-${itemKey} ra-mb15`} defaultActiveKey={isNewDoc ? ['1'] : null}>
-          <Collapse.Panel key={1} header={<label>{startCase(itemKey)}:</label>}>
+          <Collapse.Panel key={'1'} header={<label>{startCase(itemKey)}:</label>}>
             {objectFields}
           </Collapse.Panel>
         </Collapse>);

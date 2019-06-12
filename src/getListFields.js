@@ -1,4 +1,3 @@
-import React from 'react';
 import {listHelpers} from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
@@ -7,13 +6,13 @@ const EMPTY_OBJ = {};
 const getListFields = function (props, jsonSchema = {}) {
   const properties = jsonSchema.properties || EMPTY_OBJ;
   const fields = []
-  Object.keys(properties).map(itemKey => {
+  Object.keys(properties).forEach(itemKey => {
     const item = properties[itemKey]
     let meta = getDeepObjectValue(item, 'meta.0') || EMPTY_OBJ
     if((item.type === 'object' || item.type === Object) && meta === EMPTY_OBJ) {
       // in this case the meta can be found at the children as parentDashboard, this is a workaround;
       let metaFromInnerField;
-      Object.keys(item.properties).map(itemKey => {
+      Object.keys(item.properties).forEach(itemKey => {
         if(!metaFromInnerField) {
           const innerField = item.properties[itemKey];
           metaFromInnerField = getDeepObjectValue(innerField, 'meta.0.parentDashboard')

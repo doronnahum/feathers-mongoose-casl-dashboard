@@ -1,10 +1,8 @@
-import React from 'react';
-
 import { getDeepObjectValue } from 'validate.js';
 const getInitialValues = function (jsonSchema = {}) {
   const properties = jsonSchema.properties || {};
   const initialValues = {}
-  Object.keys(properties).map(itemKey => {
+  Object.keys(properties).forEach(itemKey => {
     const item = properties[itemKey]
     const docDashboard = getDeepObjectValue(item, 'meta.0.dashboard.doc');
     if(docDashboard && docDashboard.initialValue) {

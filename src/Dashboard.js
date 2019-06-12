@@ -7,7 +7,6 @@ import startCase from 'lodash/startCase';
 // import {buildYup} from './utils/json-schema-to-yup/index';
 import {buildYup} from 'json-schema-to-yup';
 import cloneDeep from 'lodash/cloneDeep';
-import {Icon} from 'antd';
 import { getDeepObjectValue } from 'validate.js';
 class index extends Component {
   constructor(props) {
@@ -31,7 +30,7 @@ class index extends Component {
     if(_schema.properties) {
       // remove hidden fields and fix required fields
       const required = jsonSchema.required || []
-      let fields = Object.keys(_schema.properties) || [];
+      let fields = Object.keys(_schema.properties)
       const newProperties = {};
       fields.forEach(filedKey => {
         const field = _schema.properties[filedKey]
