@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Dashboard from './Dashboard';
-import { getDeepObjectValue } from 'validate.js';
 import { Selector } from 'net-provider'
 class DashboardWrapper extends Component {
   render() {
