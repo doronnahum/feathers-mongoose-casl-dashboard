@@ -3,9 +3,9 @@ import Dashboard from './Dashboard';
 import { Selector } from 'net-provider'
 class DashboardWrapper extends Component {
   render() {
-    const {showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved} = this.props
+    const {renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved} = this.props
     if(!url) {
-      return 'Missing Url'
+      return renderDefaultScreen ? renderDefaultScreen(this.props) : '';
     }
     const dashboardData = this.props.dashboardData || [];
     const data = dashboardData.find(item => (item.result.name === url));
