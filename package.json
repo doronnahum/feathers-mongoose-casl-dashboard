@@ -17,7 +17,9 @@
     "start": "nwb serve-react-demo",
     "test": "nwb test-react",
     "test:coverage": "nwb test-react --coverage",
-    "test:watch": "nwb test-react --server"
+    "test:watch": "nwb test-react --server",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "dependencies": {
     "json-schema-to-yup": "1.8.8",
@@ -25,7 +27,8 @@
     "lodash": "4.17.11",
     "formik": "1.5.7",
     "validate.js": "0.13.1",
-    "yup": "0.27.0"
+    "yup": "0.27.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "antd": "^3.19.5",
@@ -54,5 +57,6 @@
     "saga",
     "redux-admin",
     "feathers"
-  ]
+  ],
+  "snyk": true
 }
