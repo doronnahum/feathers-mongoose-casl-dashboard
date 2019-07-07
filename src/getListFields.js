@@ -3,7 +3,9 @@ import { getDeepObjectValue } from 'validate.js';
 import startCase from 'lodash/startCase';
 const EMPTY_OBJ = {};
 
-const getListFields = function (props, jsonSchema = {}) {
+const DEFAULT_FIELDS = ['_id','createdAt', 'updatedAt'];
+
+const getListFields = function (props, jsonSchema = {}, dashboardConfig = {}) {
   const properties = jsonSchema.properties || EMPTY_OBJ;
   const fields = []
   Object.keys(properties).forEach(itemKey => {
@@ -24,6 +26,11 @@ const getListFields = function (props, jsonSchema = {}) {
     }
     const dashboard = getDeepObjectValue(meta, 'dashboard') || EMPTY_OBJ
     const dashboardList = getDeepObjectValue(meta, 'dashboard.list') || EMPTY_OBJ
+    const dashboardConfigDefaultFields = dashboardConfig.defaultFieldsToDisplay;
+    debugger
+    if(dashboardConfigDefaultFields && DEFAULT_FIELDS.includes(itemKey) && !dashboardConfigDefaultFields.includes(itemKey)){
+      return null;
+    }
     let type = item.type;
     if(item.format === 'date-time') type = Date;
     if(meta.ref) {

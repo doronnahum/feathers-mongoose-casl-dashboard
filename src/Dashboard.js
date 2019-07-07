@@ -116,7 +116,7 @@ class index extends Component {
               //   )
               // }}
               getColumns={(props) => {
-                this.listFields = this.listFields || getListFields(props, jsonSchema);
+                this.listFields = this.listFields || getListFields(props, jsonSchema, dashboardConfig);
                 return this.listFields;
               }}
               rowSelection={this.props.rowSelection}
