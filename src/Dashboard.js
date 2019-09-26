@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import {FeathersAdmin, listViews, docViews} from 'redux-admin'
+import { FeathersAdmin, listViews, docViews } from 'redux-admin'
 import getListFields from './getListFields';
 import getDocFields from './getDocFields';
 import getInitialValues from './getInitialValues';
 import startCase from 'lodash/startCase';
 // import {buildYup} from './utils/json-schema-to-yup/index';
-import {buildYup} from 'json-schema-to-yup';
+import { buildYup } from 'json-schema-to-yup';
 import cloneDeep from 'lodash/cloneDeep';
 import { getDeepObjectValue } from 'validate.js';
+import { LOCALS } from './local';
+import { getFieldName } from './utils.js'
+
 class index extends Component {
   constructor(props) {
     super(props)
@@ -17,17 +20,19 @@ class index extends Component {
   };
 
   getDocTitle = (data) => {
-    const name = startCase(this.props.url)
-    if(data && data._id) {
+    const { dashboardConfig, url } = this.props;
+    const localName = getDeepObjectValue(dashboardConfig, `i18n.${LOCALS.LANG_CODE}.serviceNameOne`)
+    const name = localName || startCase(url)
+    if (data && data._id) {
       return `${name} ${data.name || data._id}`
-    }else {
-      return `New ${name}`
+    } else {
+      return LOCALS.RENDER_NEW_DOC_NAME(name, data)
     }
   }
 
   fixJsonSchemaRequires(jsonSchema) {
     const _schema = cloneDeep(jsonSchema);
-    if(_schema.properties) {
+    if (_schema.properties) {
       // remove hidden fields and fix required fields
       const required = jsonSchema.required || []
       let fields = Object.keys(_schema.properties)
@@ -35,23 +40,23 @@ class index extends Component {
       fields.forEach(filedKey => {
         const field = _schema.properties[filedKey]
         const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
-        if(dashboard && dashboard.allowNull) {
+        if (dashboard && dashboard.allowNull) {
           field.type = [field.type, null]
         }
-        if(field.type === 'object' && field.required) {
+        if (field.type === 'object' && field.required) {
           required.push(filedKey)
           field.required.forEach(innerField => required.push(`${filedKey}.${innerField}`))
         }
-        if(dashboard && dashboard.hide) {
+        if (dashboard && dashboard.hide) {
           return;
         }
         newProperties[filedKey] = field;
         const isRequired = required.includes(field)
-        if(isRequired) {
+        if (isRequired) {
           const fieldConfig = jsonSchema.properties[field];
-          if(fieldConfig.type === 'string') {
-            if(!fieldConfig.minLength) {
-              _schema.properties[field] = Object.assign({}, _schema.properties[field], {minLength: 1});
+          if (fieldConfig.type === 'string') {
+            if (!fieldConfig.minLength) {
+              _schema.properties[field] = Object.assign({}, _schema.properties[field], { minLength: 1 });
             }
           }
         }
@@ -61,11 +66,11 @@ class index extends Component {
     return _schema
   }
   getJoiSchema(jsonSchema) {
-    if(this.yup) return this.yup
+    if (this.yup) return this.yup
     try {
       const _jsonSchema = this.fixJsonSchemaRequires(jsonSchema)
       const yup = buildYup(_jsonSchema)
-      if(yup) {
+      if (yup) {
         this.yup = yup;
       }
       return this.yup;
@@ -75,30 +80,44 @@ class index extends Component {
     return this.yup;
   }
   getDefaultOptions = () => {
-    const {populate} = this.props
-    if(populate) {return {
-      $populate: populate.join(','),
-      '$sort[updatedAt]': -1
-    };}
+    const { populate } = this.props
+    if (populate) {
+      return {
+        $populate: populate.join(','),
+        '$sort[updatedAt]': -1
+      };
+    }
     return {
       '$sort[updatedAt]': -1
     };
   }
+
+  getFilterTitle = (field) => {
+    this.filtersNames = this.filtersNames || {};
+    this.filtersNames[field.key] = this.filtersNames[field.key] || getFieldName({ target: 'filters', lang: LOCALS.LANG_CODE, itemKey: field.key, dashboardConfig: this.props.dashboardConfig })
+    return this.filtersNames[field.key]
+  }
   render() {
-    const {url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved} = this.props;
-    if(!jsonSchema || !url) return ''
+    const { url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved } = this.props;
+    if (!jsonSchema || !url) return ''
     this.joiSchema = this.joiSchema || this.getJoiSchema(jsonSchema);
-    const defaultOptions = this.getDefaultOptions()
+    const defaultOptions = this.getDefaultOptions();
+    const localName = getDeepObjectValue(dashboardConfig, `i18n.${LOCALS.LANG_CODE}.serviceName`)
     return (
       <div className={`screen-${url}`}>
         <FeathersAdmin
-          title={url}
+          title={localName || url}
           defaultOptions={defaultOptions}
           getDocTitle={this.getDocTitle}
           url={url}
           listTargetKeyPrefix={listTargetKeyPrefix}
+          lang={LOCALS.LANG_CODE}
+          rtl={LOCALS.LANG_DIR === 'rtl'}
           list={
             <listViews.Table
+              lang={LOCALS.LANG_CODE}
+              rtl={LOCALS.LANG_DIR === 'rtl'}
+              getFilterTitle={this.getFilterTitle}
               // renderOnTop={(props) => {
               //   console.log({props})
               //   return (
@@ -125,43 +144,45 @@ class index extends Component {
           }
           doc={
             <docViews.SimpleDoc
+              lang={LOCALS.LANG_CODE}
+              rtl={LOCALS.LANG_DIR === 'rtl'}
               immutableKeys={['_id', 'updatedAt', 'createdAt']}
               getDocFields={(props) => {
                 const isNewDoc = props.isNewDoc;
-                this.newDocFields = this.newDocFields || isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData, '', dashboardConfig) : null;
-                this.editDocFields = this.editDocFields || !isNewDoc ? getDocFields(props, jsonSchema, {createFields, updateFields}, dashboardData, '', dashboardConfig) : null;
+                this.newDocFields = this.newDocFields || isNewDoc ? getDocFields(props, jsonSchema, { createFields, updateFields }, dashboardData, '', dashboardConfig) : null;
+                this.editDocFields = this.editDocFields || !isNewDoc ? getDocFields(props, jsonSchema, { createFields, updateFields }, dashboardData, '', dashboardConfig) : null;
                 return (isNewDoc ? this.newDocFields : this.editDocFields)
               }}
-              newDocInitialValues ={getInitialValues(jsonSchema)}
+              newDocInitialValues={getInitialValues(jsonSchema)}
               validationSchema={this.joiSchema}
-              getHeadersBeforeSubmit={({dataToSend}) => {
+              getHeadersBeforeSubmit={({ dataToSend }) => {
                 const allFields = Object.keys(dataToSend)
                 const hasFile = allFields.some(item => {
                   const val = dataToSend[item];
                   return (val && typeof val === 'object' && val instanceof File)
                 })
-                if(hasFile) return {'content-type': 'multipart/form-data'}
+                if (hasFile) return { 'content-type': 'multipart/form-data' }
                 return null
               }}
-              parseDataBeforeSubmit={({dataToSend}) => {
+              parseDataBeforeSubmit={({ dataToSend }) => {
                 const allFields = Object.keys(dataToSend)
                 const hasFile = allFields.some(item => {
                   const val = dataToSend[item];
                   return (val && typeof val === 'object' && val instanceof File)
                 })
-                if(!hasFile) return dataToSend
-                else{
+                if (!hasFile) return dataToSend
+                else {
                   var formData = new FormData();
                   allFields.forEach(fieldKey => {
                     let value = dataToSend[fieldKey];
-                    if(typeof value === 'object') {
+                    if (typeof value === 'object') {
                       const isFile = value instanceof File;
-                      if(isFile) {
+                      if (isFile) {
                         formData.append(fieldKey, value)
-                      }else{
+                      } else {
                         formData.append(fieldKey, JSON.stringify(value))
                       }
-                    }else{
+                    } else {
                       formData.append(fieldKey, value);
                     }
                   })

@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import Dashboard from './Dashboard';
 import { Selector } from 'net-provider'
+
 class DashboardWrapper extends Component {
   render() {
-    const {renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved} = this.props
-    if(!url) {
+    const { renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved } = this.props
+    if (!url) {
       return renderDefaultScreen ? renderDefaultScreen(this.props) : '';
     }
     const dashboardData = this.props.dashboardData || [];
     const data = dashboardData.find(item => (item.result.name === url));
-    if(!data) return '...'
+    if (!data) return '...'
     const dashboardConfig = data.data.dashboardConfig || {};
     return (
       <Dashboard
@@ -39,8 +40,8 @@ export default class DashboardApp extends Component {
   render() {
     return (
       <Selector targetKey={'dashboard'}>
-        {({data}) => {
-          return <DashboardWrapper dashboardData={data} {...this.props}/>
+        {({ data }) => {
+          return <DashboardWrapper dashboardData={data} {...this.props} />
         }}
       </Selector>
     )

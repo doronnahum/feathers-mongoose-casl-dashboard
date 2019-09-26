@@ -39,6 +39,15 @@ import {DashboardApp} from  'feathers-mongoose-casl-dashboard';
 import  'feathers-mongoose-casl-dashboard/lib/style.css'
 import  Router  from  'next/router';
 
+// Optional -
+// Change the local of the app
+// default local is enUS
+// you can import heIL or create you on local file
+// to create your own local file, copy this [file](https://github.com/doronnahum/feathers-mongoose-casl-dashboard/tree/master/src/local/en-US.js) and update
+import { DashboardApp, setLocal, locals } from  'feathers-mongoose-casl-dashboard';
+
+setLocal(locals.heIL)
+
 const  getUrl  =  function(props) {
 	return  props.router.query  &&  props.router.query.screen
 }
