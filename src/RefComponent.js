@@ -4,6 +4,7 @@ import Dashboard from './DashboardApp.js';
 import { Modal, Tag, Icon, Form } from 'antd';
 import isEmpty from 'lodash/isEmpty';
 import { NetProvider } from 'net-provider' // 'src/components/net-provider';
+import { LOCALS } from './local';
 
 const Consumer = fields.Consumer;
 
@@ -131,7 +132,7 @@ class RefComponent extends Component {
       <Form.Item label={label} className={'ra-docFieldWrapper ra-docField-' + fieldName} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
         {this.renderValue()}
         <Modal
-          title={'Select ' + fieldName + selectRowCounter}
+          title={LOCALS.RENDER_SELECT_MODAL_TITLE(fieldName, selectRowCounter)}
           destroyOnClose
           visible={this.state.visible}
           onOk={this.handleOk}
@@ -140,7 +141,7 @@ class RefComponent extends Component {
           style={{ top: 10 }}
           className='ra-refModal'
           closable={false}
-          okText='Select'
+          okText={LOCALS.SELECT}
         >
           <Dashboard
             listTargetKeyPrefix='RefComponent'
