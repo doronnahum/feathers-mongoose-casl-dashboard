@@ -1,7 +1,7 @@
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 
-export const getFieldName = ({ target, lang, itemKey, dashboardList, dashboardDoc, dashboard, dashboardConfig }) => {
+export const getFieldName = ({ target, lang, itemKey, dashboardList, dashboardDoc = {}, dashboard = {}, dashboardConfig = {} }) => {
   const i18n = getDeepObjectValue(dashboardConfig, `i18n.${lang}.fields.${itemKey}`)
   if (i18n) return i18n;
   if (target === 'filters') {
