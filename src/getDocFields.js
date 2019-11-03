@@ -1,10 +1,11 @@
 import React from 'react';
-import { docHelpers } from 'redux-admin' //  ''redux-admin'';
+import { docHelpers } from 'redux-admin'//  ''redux-admin'';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 import RefComponent from './RefComponent'
 import { Collapse } from 'antd';
-import { getFieldName } from './utils.js'
+import { getFieldName, getI18nLabelName } from './utils.js'
+import { getCustomField } from './customFields';
 
 /*
 getDocField({
@@ -127,6 +128,8 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
     const ref = getDeepObjectValue(item, 'meta.0.ref') || getDeepObjectValue(item, 'items.meta.0.ref');
     const showField = isAble({ isNewDoc, item, itemKey, preFix, abilityFields, ref, dashboardData });
     if (!showField) return null;
+
+
     const currentField = docHelpers.getDocField({
       key: preFix + itemKey,
       label: getFieldName({ target: 'doc', lang, itemKey, dashboardDoc, dashboard, dashboardConfig }),
@@ -157,24 +160,31 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
   if (dashboardConfig && dashboardConfig.docLayout) {
     const addItemField = function (item, key, _fields) {
       if (!item) return;
-      if (typeof item === 'string') {
-        _fields.push(fieldsForLayout[item])
+      if (typeof item === 'object' && item.type === 'custom') {
+        if (isNewDoc && item.hideOnCreate) return null
+        if (!isNewDoc && item.hideOnUpdate) return null
+        const displayLabel = getI18nLabelName({ lang, itemKey: item.itemKey, dashboardConfig }) || item.label || item.itemKey;
+        _fields.push(<span key={key}>{getCustomField({ item, key: item.itemKey, displayLabel })}</span>)
       } else {
-        if (Array.isArray(item)) {
-          _fields.push(<span className='ra-doc-layout-itemsGroup' key={`group${key}`}>{item.map(itemKey => fieldsForLayout[itemKey])}</span>)
-        } else if (typeof item === 'object') {
-          if (item.when) {
-            const fieldsEquale = [];
-            const fieldsNotEquale = [];
-            addItemField(item.when.then, key, fieldsEquale)
-            addItemField(item.when.otherwise, key, fieldsNotEquale)
-            fields.push(<span key={`group-${key}-withCondiation`}>
-              {
-                (values[item.when.field] === item.when.equalTo)
-                  ? <span key={`group-true=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsEquale}</span>
-                  : <span key={`group-false=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsNotEquale}</span>
-              }
-            </span>)
+        if (typeof item === 'string') {
+          _fields.push(fieldsForLayout[item])
+        } else {
+          if (Array.isArray(item)) {
+            _fields.push(<span className='ra-doc-layout-itemsGroup' key={`group${key}`}>{item.map(itemKey => fieldsForLayout[itemKey])}</span>)
+          } else if (typeof item === 'object') {
+            if (item.when) {
+              const fieldsEquale = [];
+              const fieldsNotEquale = [];
+              addItemField(item.when.then, key, fieldsEquale)
+              addItemField(item.when.otherwise, key, fieldsNotEquale)
+              fields.push(<span key={`group-${key}-withCondiation`}>
+                {
+                  (values[item.when.field] === item.when.equalTo)
+                    ? <span key={`group-true=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsEquale}</span>
+                    : <span key={`group-false=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsNotEquale}</span>
+                }
+              </span>)
+            }
           }
         }
       }

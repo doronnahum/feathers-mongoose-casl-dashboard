@@ -14,3 +14,6 @@ export const getFieldName = ({ target, lang, itemKey, dashboardList, dashboardDo
     throw new Error('getFieldName first argument must be list or doc')
   }
 }
+export const getI18nLabelName = ({ lang, itemKey, dashboardConfig = {} }) => {
+  return getDeepObjectValue(dashboardConfig, `i18n.${lang}.fields.${itemKey}`)
+}

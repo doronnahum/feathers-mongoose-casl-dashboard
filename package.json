@@ -1,6 +1,6 @@
 {
   "name": "feathers-mongoose-casl-dashboard",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "admin screen with full CRUD functionality inside your react apps to your feathers-mongoose-casl",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -14,15 +14,17 @@
     "build:watch": "nodemon -w src -x 'rm .babelrc &> /dev/null; nwb build-react-component --no-demo --copy-files'",
     "build": "nwb build-react-component --copy-files",
     "clean": "nwb clean-module && nwb clean-demo",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run min-css &&npm run build",
     "start": "nwb serve-react-demo",
     "test": "nwb test-react",
     "test:coverage": "nwb test-react --coverage",
-    "test:watch": "nwb test-react --server"
+    "test:watch": "nwb test-react --server",
+    "min-css": "uglifycss ./src/style.css --output ./src/style.min.css"
   },
   "dependencies": {
     "json-schema-to-yup": "1.8.8",
     "lodash": "4.17.15",
+    "nunjucks": "^3.2.0",
     "react-json-pretty": "2.1.0",
     "validate.js": "0.13.1",
     "yup": "0.27.0"
@@ -30,15 +32,18 @@
   "devDependencies": {
     "antd": "^3.19.5",
     "formik": "1.5.7",
+    "install": "^0.13.0",
     "net-provider": "^1.3.8",
     "nodemon": "^1.19.2",
+    "npm": "^6.12.1",
     "nwb": "0.23.x",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-redux": "7.1.0",
     "redux": "4.0.1",
     "redux-admin": "^1.6.0",
-    "redux-saga": "^1.0.3"
+    "redux-saga": "^1.0.3",
+    "uglifycss": "0.0.29"
   },
   "repository": {
     "type": "git",
