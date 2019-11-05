@@ -22,9 +22,10 @@ class index extends Component {
   getDocTitle = (data) => {
     const { dashboardConfig, url } = this.props;
     const localName = getDeepObjectValue(dashboardConfig, `i18n.${LOCALS.LANG_CODE}.serviceNameOne`)
-    const name = localName || startCase(url)
+    const name = localName || startCase(url);
+    const { docTitleField } = dashboardConfig || {};
     if (data && data._id) {
-      return `${name} ${data.name || data._id}`
+      return `${name} ${data[docTitleField] || data.name || data.title || data._id}`
     } else {
       return LOCALS.RENDER_NEW_DOC_NAME(name, data)
     }

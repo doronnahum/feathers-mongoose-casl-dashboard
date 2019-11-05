@@ -1,10 +1,10 @@
 import React from 'react';
-import { docHelpers } from 'redux-admin'//  ''redux-admin'';
+import { docHelpers } from 'redux-admin';//  ''redux-admin'';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
-import RefComponent from './RefComponent'
 import { Collapse } from 'antd';
-import { getFieldName, getI18nLabelName } from './utils.js'
+import RefComponent from './RefComponent'
+import { getFieldName, getI18nLabelName } from './utils.js';
 import { getCustomField } from './customFields';
 
 /*
@@ -64,35 +64,37 @@ const isAble = function ({ isNewDoc, item, itemKey, preFix, abilityFields = {}, 
       };
     }
     return isAble
-  } else {
-    return true;
   }
-}
+  return true;
+
+};
 const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl }, jsonSchema, abilityFields, dashboardData, preFix = '', dashboardConfig) {
   const properties = jsonSchema.properties || {};
   const requires = jsonSchema.required || [];
-  const fields = []
-  const fieldsForLayout = []
+  const fields = [];
+  const fieldsForLayout = [];
   const hasDocLayut = dashboardConfig && dashboardConfig.docLayout;
-  Object.keys(properties).map(itemKey => {
-    const item = properties[itemKey]
+  Object.keys(properties).map((itemKey) => {
+    const item = properties[itemKey];
     let options = (item.enum && item.enum.length) ? item.enum : getDeepObjectValue(item, 'items.enum');
-    let type = item.type;
+    let { type } = item;
     let objectStructure;
     if (item.format === 'date-time') type = Date;
     let objectFields;
     if (item.properties && Object.keys(item.properties).length) {
-      objectFields = getDocFields({ documentRollConfig, isNewDoc, values }, { properties: item.properties, required: requires }, abilityFields, dashboardData, `${itemKey}.`)
+      objectFields = getDocFields({ documentRollConfig, isNewDoc, values }, { properties: item.properties, required: requires }, abilityFields, dashboardData, `${itemKey}.`);
       if (objectFields.length) {
-        const currentField = (<Collapse key={itemKey} className={`group-${itemKey} ra-mb15`} defaultActiveKey={isNewDoc ? ['1'] : null}>
-          <Collapse.Panel key={'1'} header={<label>{startCase(itemKey)}:</label>}>
-            {objectFields}
-          </Collapse.Panel>
-        </Collapse>);
+        const currentField = (
+          <Collapse key={itemKey} className={`group-${itemKey} ra-mb15`} defaultActiveKey={isNewDoc ? ['1'] : null}>
+            <Collapse.Panel key={'1'} header={<label>{startCase(itemKey)}:</label>}>
+              {objectFields}
+            </Collapse.Panel>
+          </Collapse>
+        );
         if (hasDocLayut) {
-          fieldsForLayout[itemKey] = currentField
+          fieldsForLayout[itemKey] = currentField;
         } else {
-          fields.push(currentField)
+          fields.push(currentField);
         }
         return;
       }
@@ -101,25 +103,25 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
     const nestedArray = type === 'array' && !arrayItemType;
     if (type === 'array' && item.items && item.items.properties) {
       objectStructure = [];
-      Object.keys(item.items.properties).forEach(itemKey => {
+      Object.keys(item.items.properties).forEach((itemKey) => {
         const arrayField = item.items.properties[itemKey];
         let _type = arrayField.type;
         if (arrayField.format === 'date-time') {
-          _type = 'date'
+          _type = 'date';
         }
         objectStructure.push({
           key: itemKey,
           label: getFieldName({ target: 'doc', lang, itemKey, dashboardDoc, dashboard, dashboardConfig }),
-          type: _type
-        })
-      })
+          type: _type,
+        });
+      });
     }
-    const dashboard = getDeepObjectValue(item, 'meta.0.dashboard') || {}
-    const dashboardDoc = getDeepObjectValue(item, 'meta.0.dashboard.doc') || {}
-    if (dashboard.hide) return null
-    if (dashboardDoc.hide) return null
-    if (isNewDoc && dashboardDoc.hideOnCreate) return null
-    if (!isNewDoc && dashboardDoc.hideOnUpdate) return null
+    const dashboard = getDeepObjectValue(item, 'meta.0.dashboard') || {};
+    const dashboardDoc = getDeepObjectValue(item, 'meta.0.dashboard.doc') || {};
+    if (dashboard.hide) return null;
+    if (dashboardDoc.hide) return null;
+    if (isNewDoc && dashboardDoc.hideOnCreate) return null;
+    if (!isNewDoc && dashboardDoc.hideOnUpdate) return null;
     if (dashboardDoc.options) { // When we want to display enums with labels
       options = dashboardDoc.options;
       dashboardDoc.optionKey = dashboardDoc.optionKey || 'value';
@@ -129,11 +131,10 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
     const showField = isAble({ isNewDoc, item, itemKey, preFix, abilityFields, ref, dashboardData });
     if (!showField) return null;
 
-
-    const currentField = docHelpers.getDocField({
+    const fieldConfig = {
       key: preFix + itemKey,
       label: getFieldName({ target: 'doc', lang, itemKey, dashboardDoc, dashboard, dashboardConfig }),
-      type: type,
+      type,
       required: requires.includes(preFix + itemKey),
       documentRollConfig,
       isNewDoc,
@@ -147,50 +148,61 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
       disabled: item.readOnly || dashboard.readOnly || dashboardDoc.readOnly || (!isNewDoc && dashboardDoc.immutable),
       inputType: dashboardDoc.inputType,
       inputProps: dashboardDoc.inputProps ? JSON.parse(dashboardDoc.inputProps) : null,
-      RefComponent: RefComponent,
+      RefComponent,
       objectStructure,
-      helpText: dashboardDoc.helpText
-    })
+      helpText: dashboardDoc.helpText,
+    }
+    if (dashboardDoc.options) {
+      fieldConfig.renderLabel = ({
+        label, option, optionKey,
+      }) => {
+        const optionFromOptions = dashboardDoc.options.find((o) => option[optionKey] === o.value);
+        if (optionFromOptions && optionFromOptions.i18nLabels) {
+          return optionFromOptions.i18nLabels[lang] || optionFromOptions.label || label;
+        }
+        return label;
+      };
+    }
+    const currentField = docHelpers.getDocField(fieldConfig);
+
     if (hasDocLayut) {
-      fieldsForLayout[itemKey] = currentField
+      fieldsForLayout[itemKey] = currentField;
     } else {
-      fields.push(currentField)
+      fields.push(currentField);
     }
   });
   if (dashboardConfig && dashboardConfig.docLayout) {
     const addItemField = function (item, key, _fields) {
       if (!item) return;
       if (typeof item === 'object' && item.type === 'custom') {
-        if (isNewDoc && item.hideOnCreate) return null
-        if (!isNewDoc && item.hideOnUpdate) return null
+        if (isNewDoc && item.hideOnCreate) return null;
+        if (!isNewDoc && item.hideOnUpdate) return null;
         const displayLabel = getI18nLabelName({ lang, itemKey: item.itemKey, dashboardConfig }) || item.label || item.itemKey;
-        _fields.push(<span key={key}>{getCustomField({ item, key: item.itemKey, displayLabel })}</span>)
+        _fields.push(<span key={key}>{getCustomField({ item, key: item.itemKey, displayLabel })}</span>);
+      } else if (typeof item === 'string') {
+        _fields.push(fieldsForLayout[item])
       } else {
-        if (typeof item === 'string') {
-          _fields.push(fieldsForLayout[item])
-        } else {
-          if (Array.isArray(item)) {
-            _fields.push(<span className='ra-doc-layout-itemsGroup' key={`group${key}`}>{item.map(itemKey => fieldsForLayout[itemKey])}</span>)
-          } else if (typeof item === 'object') {
-            if (item.when) {
-              const fieldsEquale = [];
-              const fieldsNotEquale = [];
-              addItemField(item.when.then, key, fieldsEquale)
-              addItemField(item.when.otherwise, key, fieldsNotEquale)
-              fields.push(<span key={`group-${key}-withCondiation`}>
-                {
-                  (values[item.when.field] === item.when.equalTo)
-                    ? <span key={`group-true=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsEquale}</span>
-                    : <span key={`group-false=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsNotEquale}</span>
-                }
-              </span>)
-            }
+        if (Array.isArray(item)) {
+          _fields.push(<span className='ra-doc-layout-itemsGroup' key={`group${key}`}>{item.map(itemKey => fieldsForLayout[itemKey])}</span>)
+        } else if (typeof item === 'object') {
+          if (item.when) {
+            const fieldsEquale = [];
+            const fieldsNotEquale = [];
+            addItemField(item.when.then, key, fieldsEquale)
+            addItemField(item.when.otherwise, key, fieldsNotEquale)
+            fields.push(<span key={`group-${key}-withCondiation`}>
+              {
+                (values[item.when.field] === item.when.equalTo)
+                  ? <span key={`group-true=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsEquale}</span>
+                  : <span key={`group-false=${key}`} className='ra-doc-layout-itemsGroup'>{fieldsNotEquale}</span>
+              }
+            </span>)
           }
         }
       }
-    }
-    dashboardConfig.docLayout.map((item, index) => addItemField(item, index, fields))
+    };
+    dashboardConfig.docLayout.map((item, index) => addItemField(item, index, fields));
   }
   return fields;
-}
+};
 export default getDocFields;
