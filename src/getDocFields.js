@@ -198,7 +198,7 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
             return (<span key={_key}>{getCustomField({ item: itemField, key: itemField.itemKey, displayLabel, lang, rtl, customRenderField, customElements })}</span>);
           }
         }
-        return fieldsForLayout[item];
+        return fieldsForLayout[itemField];
       };
 
       if (isArrayOfFields) {
