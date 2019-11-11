@@ -2,9 +2,7 @@
 import React from 'react';
 import { connect } from 'formik';
 
-const Consumer = props => {
+const Consumer = (props) =>
   // All FormikProps available on props.formik!
-  return props.children(props.formik)
-};
-
+   props.children(props.formik);
 export default connect(Consumer);

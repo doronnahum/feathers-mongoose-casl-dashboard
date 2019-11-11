@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
+import { Selector } from 'net-provider';
 import Dashboard from './Dashboard';
-import { Selector } from 'net-provider'
 
 class DashboardWrapper extends Component {
   render() {
-    const { renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved } = this.props
+    const { renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved, customRenderField, customElements } = this.props;
     if (!url) {
       return renderDefaultScreen ? renderDefaultScreen(this.props) : '';
     }
     const dashboardData = this.props.dashboardData || [];
-    const data = dashboardData.find(item => (item.result.name === url));
-    if (!data) return '...'
+    const data = dashboardData.find((item) => (item.result.name === url));
+    if (!data) return '...';
     const dashboardConfig = data.data.dashboardConfig || {};
     return (
       <Dashboard
@@ -31,6 +31,8 @@ class DashboardWrapper extends Component {
         dashboardData={dashboardData}
         onRow={onRow}
         editAfterSaved={editAfterSaved}
+        customRenderField={customRenderField}
+        customElements={customElements}
       />
     );
   }
@@ -39,17 +41,15 @@ class DashboardWrapper extends Component {
 export default class DashboardApp extends Component {
   render() {
     return (
-      <Selector targetKey={'dashboard'}>
-        {({ data }) => {
-          return <DashboardWrapper dashboardData={data} {...this.props} />
-        }}
+      <Selector targetKey="dashboard">
+        {({ data }) => <DashboardWrapper dashboardData={data} {...this.props} />}
       </Selector>
-    )
+    );
   }
 }
 
 DashboardWrapper.defaultProps = {
   syncWithUrl: true,
   showBreadcrumb: true,
-  editAfterSaved: true
+  editAfterSaved: true,
 };

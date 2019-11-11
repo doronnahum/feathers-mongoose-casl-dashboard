@@ -3,8 +3,6 @@ const local = {
   LANG_DIR: 'rtl',
   RENDER_NEW_DOC_NAME: (name, data) => `${name} חדש`,
   SELECT: 'בחר',
-  RENDER_SELECT_MODAL_TITLE: (fieldName, selectRowCounter) => {
-    return ` נבחרו ${selectRowCounter}`
-  }
-}
+  RENDER_SELECT_MODAL_TITLE: (fieldName, selectRowCounter) => ` נבחרו ${selectRowCounter}`,
+};
 export default local;

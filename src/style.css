@@ -176,9 +176,19 @@
 }
 
 .ra-doc-layout-itemsGroup .ra-docFieldWrapper {
-  margin-right: 15px;
   flex: 1;
 }
+
+.dir-rtl .ra-doc-layout-itemsGroup .ra-docFieldWrapper:not(:first-child) {
+  margin-right: 15px;
+}
+
+.dir-ltr .ra-doc-layout-itemsGroup .ra-docFieldWrapper:not(:first-child) {
+  margin-left: 15px;
+
+}
+
+
 
 .ra-doc-layout-itemsGroup .ra-docFieldWrapper:first-child {
   margin-right: 0px;

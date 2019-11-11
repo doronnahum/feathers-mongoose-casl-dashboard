@@ -1,7 +1,7 @@
 import { listHelpers } from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
-import { getFieldName } from './utils.js'
-  ;
+import { getFieldName } from './utils.js';
+
 const EMPTY_OBJ = {};
 
 const DEFAULT_FIELDS = ['_id', 'createdAt', 'updatedAt'];
@@ -57,7 +57,7 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
         }
         return cal;
       };
-    };
+    }
     fields.push(listHelpers.getListField(fieldConfig));
   });
   return fields;
