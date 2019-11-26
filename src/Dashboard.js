@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 import React, { Component } from 'react';
 import { FeathersAdmin, listViews, docViews } from 'redux-admin';
 import startCase from 'lodash/startCase';
@@ -30,7 +31,7 @@ class index extends Component {
     return LOCALS.RENDER_NEW_DOC_NAME(name, data);
   }
 
-  fixJsonSchemaRequires(jsonSchema) {
+  fixJsonSchemaRequires(jsonSchema, isNewDoc, dashboardConfig) {
     const _schema = cloneDeep(jsonSchema);
     if (_schema.properties) {
       // remove hidden fields and fix required fields
@@ -50,6 +51,12 @@ class index extends Component {
         if (dashboard && dashboard.hide) {
           return;
         }
+        if (isNewDoc && dashboard && dashboard.doc && dashboard.doc.hideOnCreate) {
+          return;
+        }
+        if (!isNewDoc && dashboard && dashboard.doc && dashboard.doc.hideOnUpdate) {
+          return;
+        }
         newProperties[filedKey] = field;
         const isRequired = required.includes(field);
         if (isRequired) {
@@ -66,19 +73,25 @@ class index extends Component {
     return _schema;
   }
 
-  getJoiSchema(jsonSchema) {
-    if (this.yup) return this.yup;
+  getJoiSchema(jsonSchema, newDoc, dashboardConfig) {
+    if (newDoc && this.yupOnNew) return this.yupOnNew;
+    if (!newDoc && this.yupOnUpdate) return this.yupOnUpdate;
     try {
-      const _jsonSchema = this.fixJsonSchemaRequires(jsonSchema);
+      const _jsonSchema = this.fixJsonSchemaRequires(jsonSchema, newDoc, dashboardConfig);
       const yup = buildYup(_jsonSchema);
-      if (yup) {
-        this.yup = yup;
+      if (newDoc) {
+        if (yup) {
+          this.yupOnNew = yup;
+          return this.yupOnNew;
+        }
+      } else if (yup) {
+        this.yupOnUpdate = yup;
+        return this.yupOnUpdate;
       }
-      return this.yup;
     } catch (error) {
       console.log('getJoiSchema error', error);
     }
-    return this.yup;
+    return newDoc ? this.yupOnNew : this.yupOnUpdate;
   }
 
   getDefaultOptions = () => {
@@ -103,7 +116,8 @@ class index extends Component {
   render() {
     const { url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved, customRenderField, customElements } = this.props;
     if (!jsonSchema || !url) return '';
-    this.joiSchema = this.joiSchema || this.getJoiSchema(jsonSchema);
+    this.joiSchemaOnCreate = this.joiSchemaOnCreate || this.getJoiSchema(jsonSchema, true, dashboardConfig);
+    this.joiSchemaOnUpdate = this.joiSchemaOnUpdate || this.getJoiSchema(jsonSchema, false, dashboardConfig);
     const defaultOptions = this.getDefaultOptions();
     const localName = getDeepObjectValue(dashboardConfig, `i18n.${LOCALS.LANG_CODE}.serviceName`);
     return (
@@ -157,7 +171,9 @@ class index extends Component {
                 return (isNewDoc ? this.newDocFields : this.editDocFields);
               }}
               newDocInitialValues={getInitialValues(jsonSchema)}
-              validationSchema={this.joiSchema}
+              validationSchema={this.joiSchemaOnCreate} // We can remove this
+              validationSchemaOnCreate={this.joiSchemaOnCreate}
+              validationSchemaOnUpdate={this.joiSchemaOnUpdate}
               getHeadersBeforeSubmit={({ dataToSend }) => {
                 const allFields = Object.keys(dataToSend);
                 const hasFile = allFields.some((item) => {
