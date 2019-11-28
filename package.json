@@ -1,6 +1,6 @@
 {
   "name": "feathers-mongoose-casl-dashboard",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "description": "admin screen with full CRUD functionality inside your react apps to your feathers-mongoose-casl",
   "main": "lib/index.js",
   "module": "es/index.js",

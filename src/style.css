@@ -194,3 +194,7 @@
   margin-right: 0px;
 
 }
+
+.ant-table-thead>tr>th {
+  background: #f0f2f5 !important;
+}

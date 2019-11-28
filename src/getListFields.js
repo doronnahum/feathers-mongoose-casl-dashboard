@@ -45,6 +45,7 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
       sorter: dashboardList.sorter === false ? false : (dashboardList.sorter || true),
       width: dashboardList.width,
       labelKey: meta.displayKey,
+      dateFormat: dashboardList.dateFormat,
     };
     if (dashboardList.options) {
       fieldConfig.render = (cal) => {

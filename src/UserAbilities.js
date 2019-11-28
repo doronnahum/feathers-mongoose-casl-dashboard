@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
 import { Formik } from 'formik';
-import { docHelpers } from 'redux-admin';
-import { NetProvider } from 'net-provider';
+import { docHelpers } from 'redux-admin'; //  ''src/localnode/redux-admin'';
+import { NetProvider } from 'net-provider'; // 'src/components/net-provider';
 import JSONPretty from 'react-json-pretty';
 
 class index extends Component {

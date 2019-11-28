@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { fields } from 'redux-admin';
+import { fields } from 'redux-admin'; //  ''src/localnode/redux-admin'';
 import { Modal, Tag, Icon, Form } from 'antd';
 import isEmpty from 'lodash/isEmpty';
-import { NetProvider } from 'net-provider';
+import { NetProvider } from 'net-provider'; // 'src/components/net-provider';
 import Dashboard from './DashboardApp.js';
 import { LOCALS } from './local';
 

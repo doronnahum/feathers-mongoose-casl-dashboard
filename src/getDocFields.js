@@ -1,5 +1,5 @@
 import React from 'react';
-import { docHelpers } from 'redux-admin';
+import { docHelpers } from 'redux-admin';//  ''src/localnode/redux-admin'';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 import { Collapse } from 'antd';
@@ -169,6 +169,7 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
     }
   });
   if (dashboardConfig && dashboardConfig.docLayout) {
+
     const addItemField = function (item, key, _fields) {
       if (!item) return;
       const isArrayOfFields = Array.isArray(item);
