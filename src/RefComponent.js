@@ -95,7 +95,7 @@ class RefComponent extends Component {
     const _isEmpty = isEmpty(value);
     const showPanIcon = !multiSelect && !_isEmpty;
     return (
-      <div className={`ra-refModal__input ${_isEmpty ? ' --empty' : ''} ${disabled ? ' --disabled' : ''}`} onClick={_isEmpty && this.showModal}>
+      <div className={`ra-refModal__input ${_isEmpty ? ' --empty' : ''} ${disabled ? ' --disabled' : ''}`} onClick={(_isEmpty && !disabled) && this.showModal}>
         {_isEmpty
           ? this.renderEmpty()
           : multiSelect
