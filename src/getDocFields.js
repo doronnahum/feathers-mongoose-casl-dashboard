@@ -1,10 +1,10 @@
 import React from 'react';
-import { docHelpers } from 'redux-admin';//  ''src/localnode/redux-admin'';
+import { docHelpers } from 'redux-admin';//  ''redux-admin'';
 import startCase from 'lodash/startCase';
 import { getDeepObjectValue } from 'validate.js';
 import { Collapse } from 'antd';
 import RefComponent from './RefComponent';
-import { getFieldName, getI18nLabelName } from './utils.js';
+import { getFieldName, getI18nLabelName, validateWhen } from './utils.js';
 import { getCustomField } from './customFields';
 
 /*
@@ -30,6 +30,7 @@ getDocField({
     objectStructure
 })
 */
+
 
 const isAble = function ({ isNewDoc, item, itemKey, preFix, abilityFields = {}, ref, dashboardData }) {
   const { createFields, updateFields } = abilityFields;
@@ -174,6 +175,7 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
       if (!item) return;
       const isArrayOfFields = Array.isArray(item);
 
+
       const getField = function (itemField, index) {
         const _key = key + (index || '');
         if (typeof itemField === 'object') {
@@ -187,7 +189,7 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
             return (
               <span key={`group-${_key}-withCondiation`}>
                 {
-                  (values[itemField.when.field] === itemField.when.equalTo)
+                  (validateWhen(values, itemField))
                     ? <span key={`group-true=${_key}`} className="ra-doc-layout-itemsGroup">{fieldsEquale}</span>
                     : <span key={`group-false=${_key}`} className="ra-doc-layout-itemsGroup">{fieldsNotEquale}</span>
                 }

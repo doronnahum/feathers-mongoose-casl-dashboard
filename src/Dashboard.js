@@ -12,7 +12,7 @@ import getListFields from './getListFields';
 import { LOCALS } from './local';
 import { getFieldName } from './utils.js';
 
-class index extends Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.docFields = null;
@@ -114,7 +114,7 @@ class index extends Component {
   }
 
   render() {
-    const { url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved, customRenderField, customElements } = this.props;
+    const { url, jsonSchema, dashboardConfig, updateFields, createFields, showBreadcrumb, syncWithUrl, listTargetKeyPrefix, dashboardData, editAfterSaved, customRenderField, customElements, docProps, listProps, actionButtonsPosition } = this.props;
     if (!jsonSchema || !url) return '';
     this.joiSchemaOnCreate = this.joiSchemaOnCreate || this.getJoiSchema(jsonSchema, true, dashboardConfig);
     this.joiSchemaOnUpdate = this.joiSchemaOnUpdate || this.getJoiSchema(jsonSchema, false, dashboardConfig);
@@ -135,6 +135,7 @@ class index extends Component {
               lang={LOCALS.LANG_CODE}
               rtl={LOCALS.LANG_DIR === 'rtl'}
               getFilterTitle={this.getFilterTitle}
+              actionPosition={actionButtonsPosition}
               // renderOnTop={(props) => {
               //   console.log({props})
               //   return (
@@ -153,10 +154,15 @@ class index extends Component {
               // }}
               getColumns={(props) => {
                 this.listFields = this.listFields || getListFields(props, jsonSchema, dashboardConfig);
+                return (this.listFields || []).filter((item) => !item.hideFromTable);
+              }}
+              getFilterFields={(props) => {
+                this.listFields = this.listFields || getListFields(props, jsonSchema, dashboardConfig);
                 return this.listFields;
               }}
               rowSelection={this.props.rowSelection}
               onRow={this.props.onRow}
+              {...listProps}
             />
           )}
           doc={(
@@ -207,6 +213,7 @@ class index extends Component {
                 });
                 return formData;
               }}
+              {...docProps}
             />
           )}
           roleConfig={{
@@ -224,4 +231,8 @@ class index extends Component {
   }
 }
 
-export default index;
+Dashboard.defaultProps = {
+  docProps: {},
+  listProps: {},
+}
+export default Dashboard;

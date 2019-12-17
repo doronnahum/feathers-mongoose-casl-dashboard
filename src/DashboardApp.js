@@ -1,10 +1,25 @@
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
 import { Selector } from 'net-provider';
 import Dashboard from './Dashboard';
 
 class DashboardWrapper extends Component {
   render() {
-    const { renderDefaultScreen, showBreadcrumb, syncWithUrl, rowSelection, listTargetKeyPrefix, url, onRow, editAfterSaved, customRenderField, customElements } = this.props;
+    const {
+      renderDefaultScreen,
+      showBreadcrumb,
+      syncWithUrl,
+      rowSelection,
+      listTargetKeyPrefix,
+      url,
+      onRow,
+      editAfterSaved,
+      customRenderField,
+      customElements,
+      docProps,
+      listProps,
+    } = this.props;
     if (!url) {
       return renderDefaultScreen ? renderDefaultScreen(this.props) : '';
     }
@@ -16,7 +31,7 @@ class DashboardWrapper extends Component {
       <Dashboard
         key={url}
         url={url}
-        canCreate={data.result.canCreate}
+        canCreate={data.result.canCreate && !dashboardConfig.hideNewButton === true}
         canUpdate={data.result.canUpdate}
         canDelete={data.result.canDelete}
         updateFields={data.result.updateFields}
@@ -33,6 +48,9 @@ class DashboardWrapper extends Component {
         editAfterSaved={editAfterSaved}
         customRenderField={customRenderField}
         customElements={customElements}
+        docProps={docProps}
+        listProps={listProps}
+        actionButtonsPosition={dashboardConfig.actionButtonsPosition || 'end'}
       />
     );
   }

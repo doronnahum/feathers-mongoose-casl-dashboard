@@ -1,5 +1,7 @@
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable max-classes-per-file */
 import React, { Component } from 'react';
-import { fields } from 'redux-admin'; //  ''src/localnode/redux-admin'';
+import { fields } from 'redux-admin'; //  ''redux-admin'';
 import { Modal, Tag, Icon, Form } from 'antd';
 import isEmpty from 'lodash/isEmpty';
 import { NetProvider } from 'net-provider'; // 'src/components/net-provider';
@@ -48,26 +50,30 @@ class RefComponent extends Component {
   }
 
   renderItem = (item, _disabled) => {
-    const { optionKey, optionLabel, multiSelect, disabled } = this.props;
+    const { optionKey, optionLabel, multiSelect, disabled, inputType } = this.props;
     const isString = typeof item === 'string';
+
     const val = isString ? item : item[optionKey];
-    const render = (d) => (
+    const render = (d, imageSrc) => (
       <Tag
         className={multiSelect ? 'ra-refModal__multiTag ra-text-ellipsis' : 'ra-refModal__oneTag ra-text-ellipsis'}
         key={val}
         closable={!disabled || !_disabled}
         onClose={() => this.removeItem(val)}
-      ><a href={`/app/dashboard?screen=${this.props.url}&e=${isString ? item : item._id}`} target="_blank">{d}</a>
+      ><a href={`/dashboard?screen=${this.props.url}&e=${isString ? item : item._id}`} target="_blank">{imageSrc ? <img className='ra-refModal__tag_image' src={imageSrc} height={45} style={{ margin: 15 }} alt={d} /> : d}</a>
       </Tag>
     );
     // item is object
     if (!isString) {
-      return render(item[optionLabel] || item[optionKey]);
+      const imageSrc = inputType === 'imageView' && item.file;
+      return render(item[optionLabel] || item[optionKey], imageSrc);
     }
     // item is String
     if (optionLabel) {
       let fullObject = this.state.selectedRowKeysData.find((obj) => obj[optionKey] === item);
-      if (fullObject) return render(fullObject[optionLabel] || item);
+      const imageSrc = inputType === 'imageView' && fullObject && fullObject.file;
+      // if (fullObject && fullObject.)
+      if (fullObject) return render(fullObject[optionLabel] || item, imageSrc);
       return (
         <NetProvider
           loadData={{
@@ -82,7 +88,8 @@ class RefComponent extends Component {
         >
           {({ data }) => {
             fullObject = data || {};
-            return render(fullObject[optionLabel] || item);
+            const imageSrc = inputType === 'imageView' && fullObject.file;
+            return render(fullObject[optionLabel] || item, imageSrc);
           }}
         </NetProvider>
       );
@@ -128,10 +135,10 @@ class RefComponent extends Component {
 
   render() {
     const { selectedRowKeys } = this.state;
-    const { url, multiSelect, fieldName, label, fieldError, required } = this.props;
+    const { url, multiSelect, fieldName, label, fieldError, required, helpText } = this.props;
     const selectRowCounter = ` - (${selectedRowKeys.length})`;
     return (
-      <Form.Item label={label} className={`ra-docFieldWrapper ra-docField-${fieldName}`} required={required} hasFeedback={fieldError} help={fieldError} validateStatus={fieldError ? 'error' : 'validating'}>
+      <Form.Item label={label} className={`ra-docFieldWrapper ra-docField-${fieldName}`} required={required} hasFeedback={fieldError} help={fieldError || helpText} validateStatus={fieldError ? 'error' : 'validating'}>
         {this.renderValue()}
         <Modal
           title={LOCALS.RENDER_SELECT_MODAL_TITLE(fieldName, selectRowCounter)}
@@ -170,14 +177,18 @@ class RefComponent extends Component {
 
 class RefComponentWithValue extends React.Component {
   render() {
-    const { name, multiSelect, optionKey, optionLabel, label, required, disabled } = this.props.fieldProps;
+    const { inputType } = this.props;
+    const { name, multiSelect, optionKey, optionLabel, label, required, disabled, helpText } = this.props.fieldProps;
+    console.log({
+      p: this.props
+    })
     return (
       <Consumer>
         {(form) => {
           const { setFieldValue, values, errors } = form;
           const value = fields.util.getFieldValueByName(name, values);
           const fieldError = fields.util.getFieldErrorByName(name, errors);
-          return <RefComponent disabled={disabled} fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect} />;
+          return <RefComponent disabled={disabled} fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect} inputType={inputType} helpText={helpText} />;
         }}
       </Consumer>
     );

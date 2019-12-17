@@ -28,16 +28,12 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
     const dashboard = getDeepObjectValue(meta, 'dashboard') || EMPTY_OBJ;
     const dashboardList = getDeepObjectValue(meta, 'dashboard.list') || EMPTY_OBJ;
     const dashboardConfigDefaultFields = dashboardConfig.defaultFieldsToDisplay;
-    if (dashboardConfigDefaultFields && DEFAULT_FIELDS.includes(itemKey) && !dashboardConfigDefaultFields.includes(itemKey)) {
-      return null;
-    }
     let { type } = item;
     if (item.format === 'date-time') type = Date;
     if (meta.ref) {
       type = Object;
     }
-    if (dashboard.hide) return null;
-    if (dashboardList.hide) return null;
+
     const fieldConfig = {
       key: itemKey,
       title: getFieldName({ target: 'list', lang, itemKey, dashboardList, dashboard, dashboardConfig }),
@@ -59,7 +55,14 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
         return cal;
       };
     }
-    fields.push(listHelpers.getListField(fieldConfig));
+    if (
+      dashboard.hide
+      || dashboardList.hide
+      || (dashboardConfigDefaultFields && DEFAULT_FIELDS.includes(itemKey) && !dashboardConfigDefaultFields.includes(itemKey))
+    ) {
+      fieldConfig.hideFromTable = true;
+    }
+    fields.push({ ...listHelpers.getListField(fieldConfig), hideFromTable: fieldConfig.hideFromTable });
   });
   return fields;
 };
