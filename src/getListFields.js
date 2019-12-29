@@ -6,7 +6,7 @@ const EMPTY_OBJ = {};
 
 const DEFAULT_FIELDS = ['_id', 'createdAt', 'updatedAt'];
 
-const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig = {}) {
+const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig = {}, filtersData) {
   const properties = jsonSchema.properties || EMPTY_OBJ;
   const fields = [];
   Object.keys(properties).forEach((itemKey) => {
@@ -62,7 +62,23 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
     ) {
       fieldConfig.hideFromTable = true;
     }
-    fields.push({ ...listHelpers.getListField(fieldConfig), hideFromTable: fieldConfig.hideFromTable });
+    const fieldToPush = {
+      ...listHelpers.getListField(fieldConfig),
+      hideFromTable: fieldConfig.hideFromTable,
+      align: dashboardConfig.listFieldAlign || 'right',
+    };
+    if (filtersData) {
+      fieldToPush.label = fieldConfig.title;
+      if (dashboardList.options) {
+        fieldToPush.options = dashboardList.options.map((option) => {
+          const filterOption = { ...option };
+          filterOption.label = filterOption.i18nLabels[lang] || filterOption.label;
+          return filterOption;
+        })
+      }
+
+    }
+    fields.push(fieldToPush);
   });
   return fields;
 };

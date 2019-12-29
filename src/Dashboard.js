@@ -76,9 +76,19 @@ class Dashboard extends Component {
   getJoiSchema(jsonSchema, newDoc, dashboardConfig) {
     if (newDoc && this.yupOnNew) return this.yupOnNew;
     if (!newDoc && this.yupOnUpdate) return this.yupOnUpdate;
+    const config = {};
+    const errMessages = getDeepObjectValue(dashboardConfig, `errMessages.i18n.${LOCALS.LANG_CODE}`) || getDeepObjectValue(dashboardConfig, 'errMessages.default');
+    if (errMessages) {
+      try {
+        config.errMessages = JSON.parse(errMessages);
+        console.log({ 1: config.errMessages })
+      } catch (error) {
+        console.log('feathers-mongoose-casl-dashboard\Dashboard.js getJoiSchema > config.errMessages error ');
+      }
+    }
     try {
       const _jsonSchema = this.fixJsonSchemaRequires(jsonSchema, newDoc, dashboardConfig);
-      const yup = buildYup(_jsonSchema);
+      const yup = buildYup(_jsonSchema, config);
       if (newDoc) {
         if (yup) {
           this.yupOnNew = yup;
@@ -120,6 +130,7 @@ class Dashboard extends Component {
     this.joiSchemaOnUpdate = this.joiSchemaOnUpdate || this.getJoiSchema(jsonSchema, false, dashboardConfig);
     const defaultOptions = this.getDefaultOptions();
     const localName = getDeepObjectValue(dashboardConfig, `i18n.${LOCALS.LANG_CODE}.serviceName`);
+    const { filterFields } = dashboardConfig;
     return (
       <div className={`screen-${url}`}>
         <FeathersAdmin
@@ -134,7 +145,7 @@ class Dashboard extends Component {
             <listViews.Table
               lang={LOCALS.LANG_CODE}
               rtl={LOCALS.LANG_DIR === 'rtl'}
-              getFilterTitle={this.getFilterTitle}
+              // getFilterTitle={this.getFilterTitle}
               actionPosition={actionButtonsPosition}
               // renderOnTop={(props) => {
               //   console.log({props})
@@ -157,8 +168,11 @@ class Dashboard extends Component {
                 return (this.listFields || []).filter((item) => !item.hideFromTable);
               }}
               getFilterFields={(props) => {
-                this.listFields = this.listFields || getListFields(props, jsonSchema, dashboardConfig);
-                return this.listFields;
+                this.filterFields = this.filterFields || getListFields(props, jsonSchema, dashboardConfig, true);
+                if (filterFields && filterFields.length) {
+                  return this.filterFields.filter((item) => filterFields.includes(item.key));
+                }
+                return this.filterFields;
               }}
               rowSelection={this.props.rowSelection}
               onRow={this.props.onRow}
@@ -234,5 +248,5 @@ class Dashboard extends Component {
 Dashboard.defaultProps = {
   docProps: {},
   listProps: {},
-}
+};
 export default Dashboard;

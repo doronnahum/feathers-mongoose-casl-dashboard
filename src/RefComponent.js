@@ -113,7 +113,7 @@ class RefComponent extends Component {
     );
   }
 
-  renderEmpty = () => (this.props.multiSelect ? 'Click to select many' : 'Click to select one')
+  renderEmpty = () => (this.props.multiSelect ? LOCALS.CLICK_TO_SELECT_MANY : LOCALS.CLICK_TO_SELECT_ONE)
 
   onSelect = (record) => {
     let selectedRowKeys = [...this.state.selectedRowKeys];
