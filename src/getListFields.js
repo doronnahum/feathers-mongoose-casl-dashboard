@@ -72,7 +72,7 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
       if (dashboardList.options) {
         fieldToPush.options = dashboardList.options.map((option) => {
           const filterOption = { ...option };
-          filterOption.label = (filterOption.i18nLabels[lang] && filterOption.i18nLabels) || filterOption.label;
+          filterOption.label = (filterOption.i18nLabels && filterOption.i18nLabels[lang]) || filterOption.label;
           return filterOption;
         })
       }
