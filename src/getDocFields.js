@@ -161,8 +161,8 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
         return label;
       };
     }
-    const currentField = docHelpers.getDocField(fieldConfig);
 
+    const currentField = docHelpers.getDocField(fieldConfig);
     if (hasDocLayut) {
       fieldsForLayout[itemKey] = currentField;
     } else {

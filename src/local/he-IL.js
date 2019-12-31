@@ -1,3 +1,5 @@
+const { buildYup, types } = require("json-schema-to-yup");
+
 const local = {
   LANG_CODE: 'heIL',
   LANG_DIR: 'rtl',
@@ -5,6 +7,29 @@ const local = {
   SELECT: 'בחר',
   RENDER_SELECT_MODAL_TITLE: (fieldName, selectRowCounter) => ` נבחרו ${selectRowCounter}`,
   CLICK_TO_SELECT_ONE: 'לחץ לבחירה',
-  CLICK_TO_SELECT_MANY: 'לחץ לבחירה'
+  CLICK_TO_SELECT_MANY: 'לחץ לבחירה',
+  LOCAL_YUP: {
+    oneOf: 'ערך לא תקין',
+    enum: 'ערך לא תקין',
+    required: 'שדה חובה',
+    minDate: 'תאריך מוקדם מדיי',
+    min: ({ min }) => `מינימום ${min}`,
+    maxDate: 'תאריך מאוחר מדיי',
+    max: ({ max }) => `מקסימום ${max}`,
+    trim: 'ערך לא תקין',
+    lowercase: 'ערך לא תקין',
+    uppercase: 'ערך לא תקין',
+    email: 'כתובת אימייל לא תקינה',
+    url: 'ערך זה אינו כתובת תקינה',
+    minLength: ({ minLength }) => `מינימום ${minLength} תווים`,
+    maxLength: ({ maxLength }) => `מקסימום ${maxLength} תווים`,
+    pattern: 'ערך לא תקין',
+    matches: 'ערך לא תקין',
+    regex: 'ערך לא תקין',
+    integer: 'ערך לא תקין',
+    positive: 'ערך לא תקין',
+    minimum: 'ערך לא תקין',
+    maximum: 'ערך לא תקין',
+  },
 };
 export default local;

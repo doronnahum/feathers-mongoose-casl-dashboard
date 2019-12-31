@@ -41,9 +41,10 @@ class Dashboard extends Component {
       fields.forEach((filedKey) => {
         const field = _schema.properties[filedKey];
         const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
-        if (dashboard && dashboard.allowNull) {
-          field.type = [field.type, null];
-        }
+        // if (dashboard && dashboard.allowNull) {
+        //   field.type = [field.type, null];
+        // }
+        field.type = [field.type, null];
         if (field.type === 'object' && field.required) {
           required.push(filedKey);
           field.required.forEach((innerField) => required.push(`${filedKey}.${innerField}`));
@@ -84,6 +85,15 @@ class Dashboard extends Component {
         console.log({ 1: config.errMessages })
       } catch (error) {
         console.log('feathers-mongoose-casl-dashboard\Dashboard.js getJoiSchema > config.errMessages error ');
+      }
+    }
+    if (LOCALS.LOCAL_YUP) {
+      this.yupFields = this.yupFields || (jsonSchema && jsonSchema.properties && Object.keys(jsonSchema.properties));
+      if (this.yupFields) {
+        this.yupFields.forEach((field) => {
+          config.errMessages = config.errMessages || {};
+          config.errMessages[field] = config.errMessages[field] ? { ...config.errMessages[field], ...LOCALS.LOCAL_YUP } : LOCALS.LOCAL_YUP;
+        });
       }
     }
     try {
@@ -141,6 +151,7 @@ class Dashboard extends Component {
           listTargetKeyPrefix={listTargetKeyPrefix}
           lang={LOCALS.LANG_CODE}
           rtl={LOCALS.LANG_DIR === 'rtl'}
+          regexFilters={dashboardConfig.regex}
           list={(
             <listViews.Table
               lang={LOCALS.LANG_CODE}

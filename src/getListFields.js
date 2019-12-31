@@ -1,3 +1,4 @@
+import React from 'react';
 import { listHelpers } from 'redux-admin';
 import { getDeepObjectValue } from 'validate.js';
 import { getFieldName } from './utils.js';
@@ -42,7 +43,9 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
       width: dashboardList.width,
       labelKey: meta.displayKey,
       dateFormat: dashboardList.dateFormat,
+      forceLtr: dashboardList.forceLtr,
     };
+
     if (dashboardList.options) {
       fieldConfig.render = (cal) => {
         if (dashboardList.options) {
@@ -74,9 +77,8 @@ const getListFields = function ({ rtl, lang }, jsonSchema = {}, dashboardConfig 
           const filterOption = { ...option };
           filterOption.label = (filterOption.i18nLabels && filterOption.i18nLabels[lang]) || filterOption.label;
           return filterOption;
-        })
+        });
       }
-
     }
     fields.push(fieldToPush);
   });
