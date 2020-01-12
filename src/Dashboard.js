@@ -41,10 +41,9 @@ class Dashboard extends Component {
       fields.forEach((filedKey) => {
         const field = _schema.properties[filedKey];
         const dashboard = getDeepObjectValue(field, 'meta.0.dashboard');
-        // if (dashboard && dashboard.allowNull) {
-        //   field.type = [field.type, null];
-        // }
-        field.type = [field.type, null];
+        if (dashboard && dashboard.allowNull) {
+          field.type = [field.type, null];
+        }
         if (field.type === 'object' && field.required) {
           required.push(filedKey);
           field.required.forEach((innerField) => required.push(`${filedKey}.${innerField}`));
