@@ -149,6 +149,7 @@ const getDocFields = function ({ documentRollConfig, isNewDoc, values, lang, rtl
       RefComponent,
       objectStructure,
       helpText: dashboardDoc.helpText,
+      customElements,
     };
     if (dashboardDoc.options) {
       fieldConfig.renderLabel = ({

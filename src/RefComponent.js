@@ -168,6 +168,7 @@ class RefComponent extends Component {
               onClick: () => this.onSelect(record),
             })}
             editAfterSaved={false}
+            customElements={this.props.customElements}
           />
         </Modal>
       </Form.Item>
@@ -178,7 +179,7 @@ class RefComponent extends Component {
 class RefComponentWithValue extends React.Component {
   render() {
     const { inputType } = this.props;
-    const { name, multiSelect, optionKey, optionLabel, label, required, disabled, helpText } = this.props.fieldProps;
+    const { name, multiSelect, optionKey, optionLabel, label, required, disabled, helpText, customElements } = this.props.fieldProps;
     console.log({
       p: this.props
     })
@@ -188,7 +189,7 @@ class RefComponentWithValue extends React.Component {
           const { setFieldValue, values, errors } = form;
           const value = fields.util.getFieldValueByName(name, values);
           const fieldError = fields.util.getFieldErrorByName(name, errors);
-          return <RefComponent disabled={disabled} fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect} inputType={inputType} helpText={helpText} />;
+          return <RefComponent disabled={disabled} fieldError={fieldError} required={required} label={label} optionKey={optionKey} optionLabel={optionLabel} url={this.props.url} value={value} setFieldValue={setFieldValue} fieldName={name} multiSelect={multiSelect} inputType={inputType} helpText={helpText} customElements={customElements} />;
         }}
       </Consumer>
     );
