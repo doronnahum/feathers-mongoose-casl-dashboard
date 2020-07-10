@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "json-schema-to-yup": "1.8.8",
-    "lodash": "4.17.15",
+    "lodash": "4.17.16",
     "nunjucks": "^3.2.0",
     "react-json-pretty": "2.1.0",
     "sift": "^9.0.4",
